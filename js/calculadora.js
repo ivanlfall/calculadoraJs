@@ -1,4 +1,8 @@
-let calculo;
+let calculo = {
+    resultadoAnterior: "-",
+    operador: ""
+};
+let esIgual = false
 let pantallaEntrada = document.getElementById("entrada")
 let pantallaResultado = document.getElementById("resultado")
 
@@ -19,12 +23,17 @@ function mostrar(boton){
 }
 
 function operador(operador){
-    pantallaResultado.innerHTML = pantallaEntrada.innerHTML + " " + operador.innerHTML
     let resultadoAux = parseFloat(pantallaEntrada.innerHTML)
-    calculo = {
-        resultadoAnterior: resultadoAux,
-        operador: operador.innerHTML
+    if(calculo.resultadoAnterior != "-"){
+
+        calculo.resultadoAnterior = calcular()
+        calculo.operador = operador.innerHTML
+    }else{
+        calculo.resultadoAnterior= resultadoAux
+        calculo.operador= operador.innerHTML
     }
+
+    pantallaResultado.innerHTML = calculo.resultadoAnterior + " " + operador.innerHTML
     pantallaEntrada.innerHTML = ""
 }
 
@@ -34,16 +43,21 @@ function calcular() {
 
     switch (calculo.operador) {
         case "+":
-            resultadoFinal = calculo.resultadoAnterior + parseFloat(pantallaEntrada.innerHTML)
+            esIgual ? resultadoFinal = calculo.resultadoAnterior + 0 :
+            resultadoFinal = parseFloat(calculo.resultadoAnterior) + parseFloat(pantallaEntrada.innerHTML)
             break;
         case "-":
+            esIgual ? resultadoFinal = calculo.resultadoAnterior - 0 :
             resultadoFinal = calculo.resultadoAnterior - parseFloat(pantallaEntrada.innerHTML)
             break;
         case "*":
+            esIgual ? resultadoFinal = calculo.resultadoAnterior * 1 :
             resultadoFinal = calculo.resultadoAnterior * parseFloat(pantallaEntrada.innerHTML)
             break;
         case "/":
-            if (parseFloat(pantallaEntrada.innerHTML) == 0) {
+            if (esIgual){
+                resultadoFinal = calculo.resultadoAnterior / 1
+            }else if (parseFloat(pantallaEntrada.innerHTML) == 0) {
                 resultadoFinal = "No puedes dividir por CERO"
             }else{
                 resultadoFinal = calculo.resultadoAnterior / parseFloat(pantallaEntrada.innerHTML)
@@ -53,6 +67,16 @@ function calcular() {
         default:
             break;
     }
+
+
+    esIgual = false
+    return resultadoFinal
+    
+}
+
+function btnIgual(){
+
+    let resultadoFinal = calcular()
 
     let hayDecimal = (resultadoFinal + "").split(".")[1] > 1
 
@@ -64,12 +88,14 @@ function calcular() {
 
     pantallaResultado.innerHTML = ""
     pantallaEntrada.innerHTML = resultadoFinal
+    esIgual = true
 }
 
 function reiniciar(){
     pantallaResultado.innerHTML = ""
     pantallaEntrada.innerHTML = ""
 
-    calculo.resultadoAnterior = ""
+    calculo.resultadoAnterior = "-"
     calculo.operador = ""
+    esIgual = false
 }
